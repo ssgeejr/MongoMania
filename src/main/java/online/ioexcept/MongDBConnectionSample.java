@@ -21,6 +21,7 @@ public class MongDBConnectionSample {
 	public MongDBConnectionSample() {
 		try {
 			openConnection();
+			scrubData();
 			loadData();
 			fetchFirstRecord();
 			fetchAllRecords();
@@ -33,12 +34,22 @@ public class MongDBConnectionSample {
 	}
 	
 	private void openConnection() throws Exception{
+		// update the connection manager for you configuration
+		System.out.println("==========>> Open Connection <<==========");
 		connMan = new MongoConnectionmanager();
 		mongodb = connMan.getDatabase("skupoc");
+		System.out.println("__________>> END [Open Connection] <<__________");
+	}
+	
+	private void scrubData() throws Exception{	
+		System.out.println("==========>> Scrub Data <<==========");
+		mongodb.getCollection("customers").drop();
+		System.out.println("__________>> END [Scrub Data] <<__________");
+		
 	}
 	
 	private void loadData() throws Exception{
-		
+		System.out.println("==========>> Load Data <<==========");
 		List<Document> documents = new ArrayList<Document>();
 		documents.add(new Document("customerid", "7497A06A-BADA-2F1D-2939-B66693277EC4")
 				.append("customer_name", "Quinn Craft")
@@ -73,32 +84,34 @@ public class MongDBConnectionSample {
 //		insert a List
 		collection.insertMany(documents);
 		System.out.println("Records inserted: " + collection.count());
+		System.out.println("__________>> END [Load Data] <<__________");
+		
 	}
 	
 	private void fetchFirstRecord() throws Exception{
+		System.out.println("==========>> Fetch First Record <<==========");
 		MongoCollection<Document> collection = mongodb.getCollection("customers");
 		Document firstcustomer = collection.find().first();
 		System.out.println(firstcustomer.toJson());
+		System.out.println("__________>> END [Fetch First Record] <<__________");
 	}
 	
 	private void fetchAllRecords() throws Exception{
+		System.out.println("==========>> Fetch All Records <<==========");
 		MongoCollection<Document> collection = mongodb.getCollection("customers");
 		MongoCursor<Document> cursor = collection.find().iterator();
-		try {
-		    while (cursor.hasNext()) {
-		        System.out.println(cursor.next().toJson());
-		        System.out.println("=======================================");
-		    }
-	        System.out.println("=======================================");
-		} finally {
-		    cursor.close();
-		}
+	    while (cursor.hasNext()) {
+	        System.out.println(cursor.next().toJson());
+	    }
+        System.out.println("__________>> END [Fetch All Records] <<__________");
 	}
 	
 	private void fetchFilteredRecords() throws Exception{
+		System.out.println("==========>> Fetch Filtered Record <<==========");
 		MongoCollection<Document> collection = mongodb.getCollection("customers");
 		Document olethaFilter = collection.find(eq("city", "Olathe")).first();
 		System.out.println(olethaFilter.toJson());
+		System.out.println("__________>> END [Fetch Filtered Record] <<__________");
 	}
 
 	public static void main(String[] args) {
